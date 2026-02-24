@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Manager Async</title>
+</head>
+<body>
+
+<h2>Task Manager Output</h2>
+<div id="output"></div>
+
+<script>
+
+let tasks = [];
+const outputDiv = document.getElementById("output");
+
+const display = (message) => {
+    outputDiv.innerHTML += `${message}<br>`;
+};
+const addTaskCallback = (task, callback) => {
+    setTimeout(() => {
+        tasks.push(task);
+        callback(`Callback: Task "${task}" added.`);
+    }, 1000);
+};
+
+const listTasksCallback = (callback) => {
+    setTimeout(() => {
+        const result = tasks.length
+            ? tasks.map((t, i) => `${i + 1}. ${t}`).join("<br>")
+            : "No tasks available.";
+        callback(result);
+    }, 1000);
+};
+const addTaskPromise = (task) => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            tasks.push(task);
+            resolve(`Promise: Task "${task}" added.`);
+        }, 1000);
+    });
+};
+const listTasksPromise = () => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const result = tasks.length
+                ? tasks.map((t, i) => `${i + 1}. ${t}`).join("<br>")
+                : "No tasks available.";
+            resolve(result);
+        }, 1000);
+    });
+};
+
+
+
+const addTask = async (task) => {
+    tasks.push(task);
+    return `Async/Await: Task "${task}" added.`;
+};
+
+const deleteTask = async (task) => {
+    tasks = tasks.filter(t => t !== task);
+    return `Async/Await: Task "${task}" deleted.`;
+};
+
+const listTasks = async () => {
+    return tasks.length
+        ? tasks.map((t, i) => `${i + 1}. ${t}`).join("<br>")
+        : "No tasks available.";
+};
+
+addTaskCallback("Learn JavaScript", (msg) => {
+    display(msg);
+    listTasksCallback(display);
+});
+
+addTaskPromise("Practice Promises")
+    .then(display)
+    .then(() => listTasksPromise())
+    .then(display);
+
+const runAsyncVersion = async () => {
+    display(await addTask("Build Project"));
+    display(await deleteTask("Learn JavaScript"));
+    display(await listTasks());
+};
+
+setTimeout(runAsyncVersion, 3000);
+
+</script>
+
+</body>
+</html>
