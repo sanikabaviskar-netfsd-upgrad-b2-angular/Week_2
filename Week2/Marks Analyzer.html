@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Marks Analyzer</title>
+</head>
+<body>
+
+<script type="module">
+
+const marks = [78, 85, 62, 90, 74];
+
+const calculateTotal = (arr) => arr.reduce((sum, mark) => sum + mark, 0);
+
+const calculateAverage = (arr) => calculateTotal(arr) / arr.length;
+
+const analyzeResult = (average) => average >= 40 ? "Pass" : "Fail";
+
+const generateReport = (arr) => {
+    const total = calculateTotal(arr);
+    const average = calculateAverage(arr);
+    const result = analyzeResult(average);
+
+    return `
+Student Marks: ${arr.map(mark => mark).join(", ")}<br>
+Total Marks: ${total}<br>
+Average Marks: ${average.toFixed(2)}<br>
+Result: ${result}
+`;
+};
+
+document.body.innerHTML = generateReport(marks);
+
+</script>
+
+</body>
+</html>
