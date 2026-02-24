@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Cart Summary</title>
+</head>
+<body>
+
+<script type="module">
+
+const products = [
+    { name: "Laptop", price: 50000, quantity: 1 },
+    { name: "Mouse", price: 500, quantity: 2 },
+    { name: "Keyboard", price: 1500, quantity: 1 }
+];
+
+const calculateCartTotal = (items) =>
+    items
+        .map(item => item.price * item.quantity)
+        .reduce((total, value) => total + value, 0);
+
+const generateInvoice = (items) => {
+    const productLines = items
+        .map(item =>
+            `${item.name} - ₹${item.price} x ${item.quantity} = ₹${item.price * item.quantity}`
+        )
+        .join("<br>");
+
+    const total = calculateCartTotal(items);
+
+    return `
+    <h2>Invoice</h2>
+    ${productLines}
+    <br><br>
+    <strong>Total Cart Value: ₹${total}</strong>
+    `;
+};
+
+document.body.innerHTML = generateInvoice(products);
+
+</script>
+
+</body>
+</html>
