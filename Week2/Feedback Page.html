@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Feedback</title>
+</head>
+
+<body>
+
+<h2>Feedback Page</h2>
+
+<button id="feedbackBtn">Submit Feedback</button>
+
+<p id="message"></p>
+
+<script>
+const button = document.getElementById("feedbackBtn");
+const message = document.getElementById("message");
+
+button.addEventListener("click", function() {
+    message.textContent = "Feedback submitted successfully!";
+});
+</script>
+
+</body>
+</html>
