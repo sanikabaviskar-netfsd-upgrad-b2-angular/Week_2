@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>To-Do List</title>
+</head>
+
+<body>
+
+<h2>Dynamic To-Do List</h2>
+
+<input type="text" id="taskInput" placeholder="Enter task">
+<button id="addBtn">Add Task</button>
+
+<ul id="taskList"></ul>
+
+<script>
+const input = document.getElementById("taskInput");
+const addBtn = document.getElementById("addBtn");
+const list = document.getElementById("taskList");
+
+function createTask(taskText){
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+        <span>${taskText}</span>
+        <button class="complete">Complete</button>
+        <button class="delete">Delete</button>
+    `;
+
+    list.appendChild(li);
+}
+
+addBtn.addEventListener("click", function(){
+    const task = input.value.trim();
+    if(task !== ""){
+        createTask(task);
+        input.value = "";
+    }
+});
+
+list.addEventListener("click", function(e){
+    if(e.target.classList.contains("delete")){
+        e.target.parentElement.remove();
+    }
+
+    if(e.target.classList.contains("complete")){
+        const text = e.target.parentElement.querySelector("span");
+        text.style.textDecoration = "line-through";
+    }
+});
+</script>
+
+</body>
+</html>
