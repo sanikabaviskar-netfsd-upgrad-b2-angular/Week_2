@@ -1,0 +1,59 @@
+using System;
+
+class ResultAnalyzer
+{
+    public void CalculateResult(int m1, int m2, int m3, out int totalMarks, out double averageMarks)
+    {
+        totalMarks = m1 + m2 + m3;
+        averageMarks = totalMarks / 3.0;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        ResultAnalyzer analyzer = new ResultAnalyzer();
+        char choice;
+
+        do
+        {
+            int m1, m2, m3;
+
+            Console.WriteLine("Enter marks for 3 subjects (0-100):");
+
+            m1 = GetValidMarks();
+            m2 = GetValidMarks();
+            m3 = GetValidMarks();
+
+            int total;
+            double avg;
+
+            analyzer.CalculateResult(m1, m2, m3, out total, out avg);
+
+            Console.WriteLine("Total Marks = " + total);
+            Console.WriteLine("Average Marks = " + avg);
+
+            if (avg >= 40)
+                Console.WriteLine("Result = Pass");
+            else
+                Console.WriteLine("Result = Fail");
+
+            Console.Write("Do you want to enter another student? (y/n): ");
+            choice = Convert.ToChar(Console.ReadLine());
+
+        } while (choice == 'y' || choice == 'Y');
+    }
+    static int GetValidMarks()
+    {
+        int marks;
+        while (true)
+        {
+            marks = Convert.ToInt32(Console.ReadLine());
+            if (marks >= 0 && marks <= 100)
+                return marks;
+            else
+                Console.WriteLine("Invalid marks. Enter between 0 and 100:");
+        }
+    }
+}
