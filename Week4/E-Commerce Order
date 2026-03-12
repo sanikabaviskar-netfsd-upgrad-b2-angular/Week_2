@@ -1,0 +1,34 @@
+using System;
+
+class OrderCalculator
+{
+    public void CalculateFinalAmount(double price, int quantity, double discount = 0, double shipping = 50)
+    {
+        double subtotal = price * quantity;
+        double discountAmount = subtotal * discount / 100;
+        double afterDiscount = subtotal - discountAmount;
+        double finalAmount = afterDiscount + shipping;
+
+        Console.WriteLine("Subtotal = " + subtotal);
+        Console.WriteLine("Discount Applied = " + discountAmount);
+        Console.WriteLine("Shipping Charge = " + shipping);
+        Console.WriteLine("Final Amount = " + finalAmount);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        OrderCalculator order = new OrderCalculator();
+
+        Console.WriteLine("Order 1 (No discount, default shipping)");
+        order.CalculateFinalAmount(500, 2);
+
+        Console.WriteLine("\nOrder 2 (10% discount, default shipping)");
+        order.CalculateFinalAmount(500, 2, 10);
+
+        Console.WriteLine("\nOrder 3 (10% discount, custom shipping)");
+        order.CalculateFinalAmount(500, 2, 10, 100);
+    }
+}
