@@ -1,0 +1,63 @@
+using System;
+
+class BankAccount
+{
+    private int accountNumber;
+    private double balance;
+
+    public int AccountNumber
+    {
+        get { return accountNumber; }
+        set { accountNumber = value; }
+    }
+
+    public double Balance
+    {
+        get { return balance; }
+        private set { balance = value; }
+    }
+
+    public void Deposit(double amount)
+    {
+        if (amount <= 0)
+        {
+            Console.WriteLine("Invalid deposit amount");
+            return;
+        }
+
+        Balance += amount;
+        Console.WriteLine("Amount Deposited: " + amount);
+    }
+    public void Withdraw(double amount)
+    {
+        if (amount <= 0)
+        {
+            Console.WriteLine("Invalid withdrawal amount");
+            return;
+        }
+
+        if (amount > Balance)
+        {
+            Console.WriteLine("Insufficient Balance");
+            return;
+        }
+
+        Balance -= amount;
+        Console.WriteLine("Amount Withdrawn: " + amount);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        BankAccount acc = new BankAccount();
+
+        acc.AccountNumber = 101;
+
+        acc.Deposit(5000);
+        acc.Withdraw(2000);
+
+        Console.WriteLine("Current Balance = " + acc.Balance);
+    }
+}
