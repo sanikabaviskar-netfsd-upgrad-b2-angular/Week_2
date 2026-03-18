@@ -1,0 +1,40 @@
+function analyzeScores(marks, threshold) {
+    
+    marks.push(82); // optional example
+
+    let total = marks.reduce((sum, mark) => sum + mark, 0);
+
+  
+    let average = total / marks.length;
+
+
+    let aboveThreshold = marks.filter(mark => mark > threshold);
+
+
+    let highest = marks.reduce((max, mark) => mark > max ? mark : max, marks[0]);
+
+
+    let subjectHighest = new Map();
+    subjectHighest.set("Math", 90);
+    subjectHighest.set("Science", 88);
+    subjectHighest.set("English", 85);
+
+
+    console.log("Marks:", marks);
+    console.log("Total Marks:", total);
+    console.log("Average Marks:", average);
+    console.log("Students above", threshold + ":", aboveThreshold.length);
+    console.log("Highest Score:", highest);
+
+    console.log("\nSubject-wise Highest Marks:");
+    subjectHighest.forEach((value, key) => {
+        console.log(key + ":", value);
+    });
+}
+
+
+let marks = [78, 85, 90, 67, 88];
+let threshold = 80;
+
+
+analyzeScores(marks, threshold);
