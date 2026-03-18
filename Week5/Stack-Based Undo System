@@ -1,0 +1,70 @@
+using System;
+
+class UndoStack
+{
+    private string[] stack;
+    private int top;
+    private int capacity;
+
+    public UndoStack(int size)
+    {
+        capacity = size;
+        stack = new string[capacity];
+        top = -1;
+    }
+
+    public void Push(string action)
+    {
+        if (top == capacity - 1)
+        {
+            Console.WriteLine("Stack Overflow! Cannot add more actions.");
+            return;
+        }
+
+        stack[++top] = action;
+        Console.WriteLine("Action performed: " + action);
+        Display();
+    }
+    public void Pop()
+    {
+        if (top == -1)
+        {
+            Console.WriteLine("Nothing to undo (Stack is empty)");
+            return;
+        }
+
+        string removed = stack[top--];
+        Console.WriteLine("Undo action: " + removed);
+        Display();
+    }
+    public void Display()
+    {
+        if (top == -1)
+        {
+            Console.WriteLine("Current State: Empty\n");
+            return;
+        }
+
+        Console.Write("Current State: ");
+        for (int i = 0; i <= top; i++)
+        {
+            Console.Write(stack[i]);
+            if (i != top) Console.Write(" → ");
+        }
+        Console.WriteLine("\n");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        UndoStack editor = new UndoStack(10);
+        editor.Push("Type A");
+        editor.Push("Type B");
+        editor.Push("Type C");
+
+        editor.Pop(); // Undo
+        editor.Pop(); // Undo
+    }
+}
