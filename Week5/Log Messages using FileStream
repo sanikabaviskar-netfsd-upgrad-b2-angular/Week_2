@@ -1,0 +1,51 @@
+using System;
+using System.IO;
+using System.Text;
+
+class Program
+{
+    static void Main()
+    {
+        string filePath = "log.txt";
+
+        try
+        {
+            Console.WriteLine("Enter log message (type 'exit' to stop):");
+
+            while (true)
+            {
+                Console.Write("Message: ");
+                string message = Console.ReadLine();
+
+                if (message.ToLower() == "exit")
+                    break;
+
+                byte[] data = Encoding.UTF8.GetBytes(message + Environment.NewLine);
+
+                using (FileStream fs = new FileStream(
+                    filePath,
+                    FileMode.Append,
+                    FileAccess.Write))
+                {
+                    fs.Write(data, 0, data.Length);
+                }
+
+                Console.WriteLine("Message written to file successfully.\n");
+            }
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Console.WriteLine("Error: You do not have permission to write to this file.");
+        }
+        catch (IOException ex)
+        {
+            Console.WriteLine("File error: " + ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Unexpected error: " + ex.Message);
+        }
+
+        Console.WriteLine("Program ended.");
+    }
+}
