@@ -1,0 +1,28 @@
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.Write("Enter product name: ");
+        string productName = Console.ReadLine();
+
+        Console.Write("Enter product price: ");
+        double price = Convert.ToDouble(Console.ReadLine());
+
+        Console.Write("Enter discount percentage: ");
+        double discount = Convert.ToDouble(Console.ReadLine());
+
+        double finalPrice = CalculateFinalPrice(price, discount);
+
+        Console.WriteLine("Product: " + productName);
+        Console.WriteLine("Final Price: " + finalPrice);
+    }
+
+    static double CalculateFinalPrice(double price, double discount)
+    {
+        double discountAmount = price * discount / 100;
+        double finalPrice = price - discountAmount;
+        return finalPrice;
+    }
+}
