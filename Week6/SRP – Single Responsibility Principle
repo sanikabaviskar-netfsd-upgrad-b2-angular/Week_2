@@ -1,0 +1,83 @@
+namespace Repo_Project
+{
+    public class Student
+    {
+        public int StudentId { get; set; }
+
+        public string StudentName { get; set; } = "";
+
+        public int Marks { get; set; }
+    }
+}
+........................................................................................................................................................................
+
+using System.Collections.Generic;
+
+namespace Repo_Project
+{
+    public class StudentRepository
+    {
+        private List<Student> students = new List<Student>();
+
+        public void AddStudent(Student student)
+        {
+            students.Add(student);
+        }
+
+        public List<Student> GetAllStudents()
+        {
+            return students;
+        }
+    }
+}
+
+...................................................................................................................................................................
+
+using System;
+using System.Collections.Generic;
+
+namespace Repo_Project
+{
+    public class ReportGenerator
+    {
+        public void GenerateReport(List<Student> students)
+        {
+            Console.WriteLine("----- Student Report -----");
+
+            foreach (var student in students)
+            {
+                Console.WriteLine("ID: " + student.StudentId);
+                Console.WriteLine("Name: " + student.StudentName);
+                Console.WriteLine("Marks: " + student.Marks);
+                Console.WriteLine("---------------------------");
+            }
+        }
+    }
+}
+
+........................................................................................................................................................
+
+using System;
+using System.Collections.Generic;
+
+namespace Repo_Project
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            StudentRepository repo = new StudentRepository();
+
+            repo.AddStudent(new Student { StudentId = 1, StudentName = "Amit", Marks = 80 });
+            repo.AddStudent(new Student { StudentId = 2, StudentName = "Riya", Marks = 90 });
+
+            List<Student> students = repo.GetAllStudents();
+
+            ReportGenerator report = new ReportGenerator();
+            report.GenerateReport(students);
+
+            Console.ReadLine();
+        }
+    }
+}
+
