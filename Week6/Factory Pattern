@@ -1,0 +1,103 @@
+namespace Factory_Notification_Service
+{
+    public interface INotification
+    {
+        void Send(string message);
+    }
+}
+
+.....................................................................................................................
+
+using System;
+
+namespace Factory_Notification_Service
+{
+    public class EmailNotification : INotification
+    {
+        public void Send(string message)
+        {
+            Console.WriteLine("Email sent: " + message);
+        }
+    }
+}
+
+............................................................................
+
+using System;
+
+namespace Factory_Notification_Service
+{
+    public class SMSNotification : INotification
+    {
+        public void Send(string message)
+        {
+            Console.WriteLine("SMS sent: " + message);
+        }
+    }
+}
+.......................................................................
+
+using System;
+
+namespace Factory_Notification_Service
+{
+    public class PushNotification : INotification
+    {
+        public void Send(string message)
+        {
+            Console.WriteLine("Push notification sent: " + message);
+        }
+    }
+}
+.........................................................................................
+
+using System;
+
+namespace Factory_Notification_Service
+{
+    public class NotificationFactory
+    {
+        public INotification CreateNotification(string type)
+        {
+            switch (type.ToLower())
+            {
+                case "email":
+                    return new EmailNotification();
+
+                case "sms":
+                    return new SMSNotification();
+
+                case "push":
+                    return new PushNotification();
+
+                default:
+                    throw new ArgumentException("Invalid notification type");
+            }
+        }
+    }
+}
+.............................................................................................................
+
+using System;
+
+namespace Factory_Notification_Service
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            NotificationFactory factory = new NotificationFactory();
+
+            INotification email = factory.CreateNotification("email");
+            email.Send("Welcome to our service!");
+
+            INotification sms = factory.CreateNotification("sms");
+            sms.Send("Your OTP is 1234");
+
+            INotification push = factory.CreateNotification("push");
+            push.Send("You have a new message");
+
+            Console.ReadLine();
+        }
+    }
+}
