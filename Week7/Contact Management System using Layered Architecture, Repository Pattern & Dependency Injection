@@ -1,0 +1,279 @@
+namespace DataAccessLayer.Models
+{
+    public class ContactInfo
+    {
+        public int ContactId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string EmailId { get; set; }
+        public long MobileNo { get; set; }
+        public string Designation { get; set; }
+
+        public int CompanyId { get; set; }
+        public int DepartmentId { get; set; }
+
+        // Navigation Properties
+        public Company Company { get; set; }
+        public Department Department { get; set; }
+    }
+}
+
+............................................................................................................................................................
+
+
+namespace DataAccessLayer.Models
+{
+    public class Company
+    {
+        public int CompanyId { get; set; }
+        public string CompanyName { get; set; }
+
+        public List<ContactInfo> Contacts { get; set; }
+    }
+}
+
+.....................................................................................................
+
+
+namespace DataAccessLayer.Models
+{
+    public class Department
+    {
+        public int DepartmentId { get; set; }
+        public string DepartmentName { get; set; }
+
+        public List<ContactInfo> Contacts { get; set; }
+    }
+}
+
+...............................................................................................................................................
+
+
+using Microsoft.EntityFrameworkCore;
+using DataAccessLayer.Models;
+
+namespace DataAccessLayer.DbContext
+{
+    public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
+    {
+        public DbSet<ContactInfo> Contacts { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<Department> Departments { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            options.UseSqlServer("your_connection_string");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ContactInfo>()
+                .HasOne(c => c.Company)
+                .WithMany(c => c.Contacts)
+                .HasForeignKey(c => c.CompanyId);
+
+            modelBuilder.Entity<ContactInfo>()
+                .HasOne(c => c.Department)
+                .WithMany(d => d.Contacts)
+                .HasForeignKey(c => c.DepartmentId);
+        }
+    }
+}
+
+
+.............................................................................................................................................
+
+
+using DataAccessLayer.Models;
+
+namespace DataAccessLayer.Repository
+{
+    public interface IContactRepository
+    {
+        List<ContactInfo> GetAllContacts();
+        ContactInfo GetContactById(int id);
+        void AddContact(ContactInfo contact);
+        void UpdateContact(ContactInfo contact);
+        void DeleteContact(int id);
+    }
+}
+
+
+.................................................................................................................................................
+
+using DataAccessLayer.Models;
+using DataAccessLayer.DbContext;
+using Microsoft.EntityFrameworkCore;
+
+namespace DataAccessLayer.Repository
+{
+    public class ContactRepository : IContactRepository
+    {
+        private readonly AppDbContext _context;
+
+        public ContactRepository()
+        {
+            _context = new AppDbContext();
+        }
+
+        public List<ContactInfo> GetAllContacts()
+        {
+            return _context.Contacts
+                .Include(c => c.Company)
+                .Include(c => c.Department)
+                .ToList();
+        }
+
+        public ContactInfo GetContactById(int id)
+        {
+            return _context.Contacts
+                .Include(c => c.Company)
+                .Include(c => c.Department)
+                .FirstOrDefault(c => c.ContactId == id);
+        }
+
+        public void AddContact(ContactInfo contact)
+        {
+            _context.Contacts.Add(contact);
+            _context.SaveChanges();
+        }
+
+        public void UpdateContact(ContactInfo contact)
+        {
+            _context.Contacts.Update(contact);
+            _context.SaveChanges();
+        }
+
+        public void DeleteContact(int id)
+        {
+            var contact = _context.Contacts.Find(id);
+            if (contact != null)
+            {
+                _context.Contacts.Remove(contact);
+                _context.SaveChanges();
+            }
+        }
+    }
+}
+
+
+.........................................................................................................................................
+
+
+using DataAccessLayer.Repository;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllersWithViews();
+
+// DI
+builder.Services.AddScoped<IContactRepository, ContactRepository>();
+
+var app = builder.Build();
+
+app.UseRouting();
+app.UseStaticFiles();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Contact}/{action=ShowContacts}/{id?}");
+
+app.Run();
+
+
+............................................................................................................................................
+
+
+using Microsoft.AspNetCore.Mvc;
+using DataAccessLayer.Models;
+using DataAccessLayer.Repository;
+using DataAccessLayer.DbContext;
+
+namespace AppUILayer.Controllers
+{
+    public class ContactController : Controller
+    {
+        private readonly IContactRepository _repo;
+        private readonly AppDbContext _context = new AppDbContext();
+
+        public ContactController(IContactRepository repo)
+        {
+            _repo = repo;
+        }
+
+        [HttpGet]
+        [Route("contact/list")]
+        public IActionResult ShowContacts()
+        {
+            return View(_repo.GetAllContacts());
+        }
+
+        [HttpGet]
+        [Route("contact/add")]
+        public IActionResult AddContact()
+        {
+            ViewBag.Companies = _context.Companies.ToList();
+            ViewBag.Departments = _context.Departments.ToList();
+            return View();
+        }
+
+        [HttpPost]
+        [Route("contact/add")]
+        public IActionResult AddContact(ContactInfo contact)
+        {
+            _repo.AddContact(contact);
+            return RedirectToAction("ShowContacts");
+        }
+
+        [HttpGet]
+        [Route("contact/edit/{id}")]
+        public IActionResult EditContact(int id)
+        {
+            ViewBag.Companies = _context.Companies.ToList();
+            ViewBag.Departments = _context.Departments.ToList();
+
+            return View(_repo.GetContactById(id));
+        }
+
+        [HttpPost]
+        [Route("contact/edit")]
+        public IActionResult EditContact(ContactInfo contact)
+        {
+            _repo.UpdateContact(contact);
+            return RedirectToAction("ShowContacts");
+        }
+
+        [HttpGet]
+        [Route("contact/delete/{id}")]
+        public IActionResult DeleteContact(int id)
+        {
+            _repo.DeleteContact(id);
+            return RedirectToAction("ShowContacts");
+        }
+    }
+}
+
+........................................................................................................................................
+
+
+@model DataAccessLayer.Models.ContactInfo
+
+<form method="post" action="/contact/add">
+    <input name="FirstName" placeholder="First Name" /><br />
+
+    <select name="CompanyId">
+        @foreach (var c in ViewBag.Companies)
+        {
+            <option value="@c.CompanyId">@c.CompanyName</option>
+        }
+    </select>
+
+    <select name="DepartmentId">
+        @foreach (var d in ViewBag.Departments)
+        {
+            <option value="@d.DepartmentId">@d.DepartmentName</option>
+        }
+    </select>
+
+    <button type="submit">Save</button>
+</form>
